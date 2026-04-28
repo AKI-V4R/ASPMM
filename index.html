@@ -321,6 +321,8 @@
   </div>
 
   <script>
+    var GAS_URL = 'https://script.google.com/macros/s/AKfycbwbznd_CbrWKxKOJ3RLB-rcMgPOPMkBd2F3VnGGwahqD9dIAkQBscV3hLUpsEyer9M0/exec';
+
     function handleUpload(input) {
       if (input.files && input.files[0]) {
         const name = input.files[0].name;
@@ -332,9 +334,61 @@
 
     document.getElementById('regForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      // TODO: GASへのデータ送信処理をここに追加
-      document.getElementById('regForm').style.display = 'none';
-      document.getElementById('successBox').style.display = 'block';
+
+      var btn = document.querySelector('.btn-submit');
+      btn.textContent = '送信中... / Sending...';
+      btn.disabled = true;
+
+      var formData = new FormData(e.target);
+      var params = {
+        company:        formData.get('company')   || '',
+        name:           formData.get('name')      || '',
+        title:          formData.get('title')     || '',
+        country:        formData.get('country')   || '',
+        email:          formData.get('email')     || '',
+        arrival:        formData.get('arrival')   || '',
+        departure:      formData.get('departure') || '',
+        passportBase64: '',
+        passportName:   ''
+      };
+
+      var passportFile = document.getElementById('passportFile').files[0];
+
+      function sendToGAS(data) {
+        fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify(data)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(json) {
+          if (json.status === 'success') {
+            document.getElementById('regForm').style.display = 'none';
+            document.getElementById('successBox').style.display = 'block';
+          } else {
+            alert('エラーが発生しました。もう一度お試しください。\n' + (json.message || ''));
+            btn.textContent = '登録する / Register';
+            btn.disabled = false;
+          }
+        })
+        .catch(function(err) {
+          alert('送信に失敗しました。通信環境をご確認ください。');
+          btn.textContent = '登録する / Register';
+          btn.disabled = false;
+        });
+      }
+
+      if (passportFile) {
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          var base64 = ev.target.result.split(',')[1];
+          params.passportBase64 = base64;
+          params.passportName   = passportFile.name;
+          sendToGAS(params);
+        };
+        reader.readAsDataURL(passportFile);
+      } else {
+        sendToGAS(params);
+      }
     });
   </script>
 </body>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asia Safety Plant Manager Meeting 2026 — Edit Registration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f5f5f2;
+      color: #2C2C2A;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .page-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .reg-header {
+      margin-bottom: 2rem;
+      border-left: 3px solid #1D9E75;
+      padding-left: 1rem;
+    }
+
+    .reg-header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 4px;
+      color: #2C2C2A;
+    }
+
+    .reg-header p {
+      font-size: 13px;
+      color: #888780;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #E1F5EE;
+      color: #0F6E56;
+      font-weight: 500;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .reg-section {
+      background: #fff;
+      border: 0.5px solid #d3d1c7;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .reg-section-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #0F6E56;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field-grid.full {
+      grid-template-columns: 1fr;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: #5F5E5A;
+      font-weight: 500;
+    }
+
+    .required { color: #D85A30; margin-left: 2px; }
+
+    .field input,
+    .field select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 9px 11px;
+      border: 0.5px solid #b4b2a9;
+      border-radius: 8px;
+      background: #f5f5f2;
+      color: #2C2C2A;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      width: 100%;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #1D9E75;
+      box-shadow: 0 0 0 3px rgba(29,158,117,0.12);
+      background: #fff;
+    }
+
+    .submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+    }
+
+    .submit-note {
+      font-size: 12px;
+      color: #888780;
+    }
+
+    .btn-submit {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 32px;
+      background: #1D9E75;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-submit:hover { background: #0F6E56; }
+    .btn-submit:active { transform: scale(0.98); }
+
+    .success-box {
+      display: none;
+      background: #E1F5EE;
+      border: 0.5px solid #5DCAA5;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .success-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: #0F6E56;
+      margin-bottom: 10px;
+    }
+
+    .success-sub {
+      font-size: 13px;
+      color: #0F6E56;
+      line-height: 1.7;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #888780;
+      font-size: 14px;
+    }
+
+    .error-box {
+      background: #FCEBEB;
+      border: 0.5px solid #F09595;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      color: #A32D2D;
+      font-size: 14px;
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .field-grid { grid-template-columns: 1fr; }
+      .submit-row { flex-direction: column; gap: 12px; align-items: stretch; }
+      .btn-submit { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <div class="reg-header">
+      <h1>Asia Safety Plant Manager Meeting <span class="badge">2026</span></h1>
+      <p>登録情報の編集 — Edit Registration</p>
+    </div>
+
+    <div class="loading" id="loadingMsg">読み込み中... / Loading...</div>
+    <div class="error-box" id="errorBox">無効なリンクです。/ Invalid link.</div>
+
+    <form id="editForm" style="display:none">
+      <input type="hidden" id="tokenField" name="token" value="" />
+
+      <div class="reg-section">
+        <div class="reg-section-label">基本情報 / Basic Information</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>会社名 / Company<span class="required">*</span></label>
+            <input type="text" id="company" name="company" required />
+          </div>
+          <div class="field">
+            <label>役職 / Title<span class="required">*</span></label>
+            <input type="text" id="title" name="title" required />
+          </div>
+          <div class="field">
+            <label>氏名 / Full Name<span class="required">*</span></label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div class="field">
+            <label>国 / Country<span class="required">*</span></label>
+            <select id="country" name="country" required>
+              <option value="">Select country</option>
+              <option>Japan</option>
+              <option>Thailand</option>
+              <option>Indonesia</option>
+              <option>Vietnam</option>
+              <option>Malaysia</option>
+              <option>Singapore</option>
+              <option>China</option>
+              <option>South Korea</option>
+              <option>India</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="reg-section">
+        <div class="reg-section-label">連絡先 / Contact</div>
+        <div class="field-grid full">
+          <div class="field">
+            <label>メールアドレス / Email<span class="required">*</span></label>
+            <input type="email" id="email" name="email" required />
+          </div>
+        </div>
+      </div>
+
+      <div class="reg-section">
+        <div class="reg-section-label">フライト情報 / Flight Schedule</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>到着便 / Arrival Flight</label>
+            <input type="text" id="arrival" name="arrival" placeholder="例: TG661 / Nov 10 15:30" />
+          </div>
+          <div class="field">
+            <label>出発便 / Departure Flight</label>
+            <input type="text" id="departure" name="departure" placeholder="例: TG662 / Nov 12 10:00" />
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-row">
+        <span class="submit-note"><span class="required">*</span> 必須項目 / Required fields</span>
+        <button type="submit" class="btn-submit">更新する / Update</button>
+      </div>
+    </form>
+
+    <div class="success-box" id="successBox">
+      <div class="success-title">更新完了！Update Complete</div>
+      <div class="success-sub">
+        登録情報を更新しました。<br />
+        Your registration has been updated successfully.
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var GAS_URL = 'https://script.google.com/macros/s/AKfycbwbznd_CbrWKxKOJ3RLB-rcMgPOPMkBd2F3VnGGwahqD9dIAkQBscV3hLUpsEyer9M0/exec';
+
+    // URLからtokenを取得
+    var token = new URLSearchParams(window.location.search).get('token');
+
+    if (!token) {
+      document.getElementById('loadingMsg').style.display = 'none';
+      document.getElementById('errorBox').style.display = 'block';
+    } else {
+      // GASからデータを取得
+      fetch(GAS_URL + '?token=' + token + '&action=getData')
+        .then(function(res) { return res.json(); })
+        .then(function(json) {
+          document.getElementById('loadingMsg').style.display = 'none';
+          if (json.status === 'success') {
+            var d = json.data;
+            document.getElementById('tokenField').value = token;
+            document.getElementById('company').value  = d.company  || '';
+            document.getElementById('name').value     = d.name     || '';
+            document.getElementById('title').value    = d.title    || '';
+            document.getElementById('email').value    = d.email    || '';
+            document.getElementById('arrival').value  = d.arrival  || '';
+            document.getElementById('departure').value = d.departure || '';
+            var countrySelect = document.getElementById('country');
+            for (var i = 0; i < countrySelect.options.length; i++) {
+              if (countrySelect.options[i].value === d.country) {
+                countrySelect.selectedIndex = i;
+                break;
+              }
+            }
+            document.getElementById('editForm').style.display = 'block';
+          } else {
+            document.getElementById('errorBox').style.display = 'block';
+          }
+        })
+        .catch(function() {
+          document.getElementById('loadingMsg').style.display = 'none';
+          document.getElementById('errorBox').style.display = 'block';
+        });
+    }
+
+    // 更新送信
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = document.querySelector('.btn-submit');
+      btn.textContent = '更新中... / Updating...';
+      btn.disabled = true;
+
+      var formData = new FormData(e.target);
+      var params = {
+        action:    'update',
+        token:     token,
+        company:   formData.get('company')   || '',
+        name:      formData.get('name')      || '',
+        title:     formData.get('title')     || '',
+        country:   formData.get('country')   || '',
+        email:     formData.get('email')     || '',
+        arrival:   formData.get('arrival')   || '',
+        departure: formData.get('departure') || ''
+      };
+
+      fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(params)
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(json) {
+        if (json.status === 'success') {
+          document.getElementById('editForm').style.display = 'none';
+          document.getElementById('successBox').style.display = 'block';
+        } else {
+          alert('エラーが発生しました。\n' + (json.message || ''));
+          btn.textContent = '更新する / Update';
+          btn.disabled = false;
+        }
+      })
+      .catch(function() {
+        alert('送信に失敗しました。通信環境をご確認ください。');
+        btn.textContent = '更新する / Update';
+        btn.disabled = false;
+      });
+    });
+  </script>
+</body>
+</html>

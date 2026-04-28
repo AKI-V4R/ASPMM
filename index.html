@@ -138,6 +138,12 @@
       background: #E1F5EE;
     }
 
+    .upload-box.dragover {
+      border-color: #1D9E75;
+      background: #E1F5EE;
+      border-style: solid;
+    }
+
     .upload-icon {
       width: 36px;
       height: 36px;
@@ -323,7 +329,41 @@
   <script>
     var GAS_URL = 'https://script.google.com/macros/s/AKfycbwbznd_CbrWKxKOJ3RLB-rcMgPOPMkBd2F3VnGGwahqD9dIAkQBscV3hLUpsEyer9M0/exec';
 
+    var uploadBox = document.getElementById('uploadBox');
+
+    uploadBox.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadBox.classList.add('dragover');
+    });
+
+    uploadBox.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadBox.classList.remove('dragover');
+    });
+
+    uploadBox.addEventListener('drop', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadBox.classList.remove('dragover');
+      var files = e.dataTransfer.files;
+      if (files && files[0]) {
+        var fileInput = document.getElementById('passportFile');
+        var dt = new DataTransfer();
+        dt.items.add(files[0]);
+        fileInput.files = dt.files;
+        handleUploadFile(files[0]);
+      }
+    });
+
     function handleUpload(input) {
+      if (input.files && input.files[0]) {
+        handleUploadFile(input.files[0]);
+      }
+    }
+
+    function handleUploadFile(file) {
       if (input.files && input.files[0]) {
         var file = input.files[0];
         if (file.type !== 'application/pdf') {

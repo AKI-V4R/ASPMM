@@ -305,6 +305,7 @@
           </svg>
           <div class="upload-label" id="uploadLabel">パスポート写真ページをアップロード（PDF形式）</div>
           <div class="upload-sub">Upload passport photo page — PDF only, max 5MB</div>
+          <button type="button" id="removeBtn" onclick="removeFile()" style="display:none; margin-top:8px; font-family:'DM Sans',sans-serif; font-size:12px; color:#D85A30; background:none; border:0.5px solid #D85A30; border-radius:6px; padding:4px 12px; cursor:pointer;">✕ 削除 / Remove</button>
           <input type="file" id="passportFile" accept=".pdf" style="display:none" onchange="handleUpload(this)" />
         </div>
       </div>
@@ -377,6 +378,15 @@
       document.getElementById('uploadLabel').innerHTML = '<span class="upload-done">✓ ' + file.name + '</span>';
       document.getElementById('uploadBox').style.borderColor = '#1D9E75';
       document.getElementById('uploadBox').style.background = '#E1F5EE';
+      document.getElementById('removeBtn').style.display = 'inline-block';
+    }
+
+    function removeFile() {
+      document.getElementById('passportFile').value = '';
+      document.getElementById('uploadLabel').innerHTML = 'パスポート写真ページをアップロード（PDF形式）';
+      document.getElementById('uploadBox').style.borderColor = '#b4b2a9';
+      document.getElementById('uploadBox').style.background = '#f5f5f2';
+      document.getElementById('removeBtn').style.display = 'none';
     }
 
     document.getElementById('regForm').addEventListener('submit', function(e) {

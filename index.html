@@ -297,9 +297,9 @@
             <path d="M9 32c0-4.418 4.03-8 9-8s9 3.582 9 8" stroke="#2C2C2A" stroke-width="1.5"/>
             <path d="M13 9h10" stroke="#2C2C2A" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
-          <div class="upload-label" id="uploadLabel">パスポート写真ページをアップロード</div>
-          <div class="upload-sub">Upload passport photo page — JPG / PNG / PDF (max 10MB)</div>
-          <input type="file" id="passportFile" accept="image/*,.pdf" style="display:none" onchange="handleUpload(this)" />
+          <div class="upload-label" id="uploadLabel">パスポート写真ページをアップロード（PDF形式）</div>
+          <div class="upload-sub">Upload passport photo page — PDF only, max 5MB</div>
+          <input type="file" id="passportFile" accept=".pdf" style="display:none" onchange="handleUpload(this)" />
         </div>
       </div>
 
@@ -325,8 +325,20 @@
 
     function handleUpload(input) {
       if (input.files && input.files[0]) {
-        const name = input.files[0].name;
-        document.getElementById('uploadLabel').innerHTML = '<span class="upload-done">✓ ' + name + '</span>';
+        var file = input.files[0];
+        if (file.type !== 'application/pdf') {
+          alert('PDFファイルのみアップロード可能です。
+Only PDF files are accepted.');
+          input.value = '';
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          alert('ファイルサイズは5MB以内にしてください。
+File size must be under 5MB.');
+          input.value = '';
+          return;
+        }
+        document.getElementById('uploadLabel').innerHTML = '<span class="upload-done">✓ ' + file.name + '</span>';
         document.getElementById('uploadBox').style.borderColor = '#1D9E75';
         document.getElementById('uploadBox').style.background = '#E1F5EE';
       }

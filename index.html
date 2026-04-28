@@ -364,22 +364,19 @@
     }
 
     function handleUploadFile(file) {
-      if (input.files && input.files[0]) {
-        var file = input.files[0];
-        if (file.type !== 'application/pdf') {
-          alert('PDFファイルのみアップロード可能です。\nOnly PDF files are accepted.');
-          input.value = '';
-          return;
-        }
-        if (file.size > 5 * 1024 * 1024) {
-          alert('ファイルサイズは5MB以内にしてください。\nFile size must be under 5MB.');
-          input.value = '';
-          return;
-        }
-        document.getElementById('uploadLabel').innerHTML = '<span class="upload-done">✓ ' + file.name + '</span>';
-        document.getElementById('uploadBox').style.borderColor = '#1D9E75';
-        document.getElementById('uploadBox').style.background = '#E1F5EE';
+      if (file.type !== 'application/pdf') {
+        alert('PDFファイルのみアップロード可能です。\nOnly PDF files are accepted.');
+        document.getElementById('passportFile').value = '';
+        return;
       }
+      if (file.size > 5 * 1024 * 1024) {
+        alert('ファイルサイズは5MB以内にしてください。\nFile size must be under 5MB.');
+        document.getElementById('passportFile').value = '';
+        return;
+      }
+      document.getElementById('uploadLabel').innerHTML = '<span class="upload-done">✓ ' + file.name + '</span>';
+      document.getElementById('uploadBox').style.borderColor = '#1D9E75';
+      document.getElementById('uploadBox').style.background = '#E1F5EE';
     }
 
     document.getElementById('regForm').addEventListener('submit', function(e) {
@@ -387,7 +384,7 @@
 
       var btn = document.querySelector('.btn-submit');
       btn.textContent = '送信中... / Sending...';
-      btn.disabled = true;
+      btn.disabled = true;ω
 
       var formData = new FormData(e.target);
       var params = {
